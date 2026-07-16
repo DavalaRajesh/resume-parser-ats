@@ -22,10 +22,8 @@ app.config.from_object(Config)
 
 db.init_app(app)
 
-# Create a permanent upload directory
+# Upload folder (works on both local machine and Render)
 UPLOAD_FOLDER = os.path.join(app.instance_path, "uploads")
-
-# Create the directory if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {"pdf", "docx"}
@@ -79,6 +77,9 @@ def upload_resume():
     if file and allowed_file(file.filename):
 
         filename = secure_filename(file.filename)
+
+# Ensure upload folder exists every time
+        os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
@@ -237,20 +238,20 @@ def export():
 
     for c in candidates:
 
+        education = f"{c.degree} | {c.institution} | {c.graduation_year}"
+
         csv_data += (
             f'{c.id},"{c.name}","{c.email}",'
-            f'"{c.phone}","{c.education}","{c.skills}"\n'
+            f'"{c.phone}","{education}","{c.skills}"\n'
         )
 
     return Response(
         csv_data,
         mimetype="text/csv",
         headers={
-            "Content-Disposition":
-            "attachment; filename=candidates.csv"
+            "Content-Disposition": "attachment; filename=candidates.csv"
         },
     )
-
 
 if __name__ == "__main__":
     app.run(debug=True)
