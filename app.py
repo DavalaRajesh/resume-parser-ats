@@ -22,7 +22,12 @@ app.config.from_object(Config)
 
 db.init_app(app)
 
-UPLOAD_FOLDER = "uploads"
+# Create a permanent upload directory
+UPLOAD_FOLDER = os.path.join(app.instance_path, "uploads")
+
+# Create the directory if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 ALLOWED_EXTENSIONS = {"pdf", "docx"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
