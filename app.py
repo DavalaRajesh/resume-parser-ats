@@ -88,6 +88,9 @@ def upload_resume():
         print("Uploaded file:", filepath)
 
         text = extract_text(filepath)
+        print("=" * 80)
+        print(text)
+        print("=" * 80)
 
         data = extract_resume_data(text)
 
